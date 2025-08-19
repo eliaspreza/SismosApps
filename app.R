@@ -1,4 +1,5 @@
 
+
 # 1. Cargar todas las librerías necesarias
 library(shiny)
 library(leaflet)
@@ -9,7 +10,8 @@ library(shinydashboard)
 library(DT)
 library(shinycssloaders)
 library(sp)
-library(writexl) ## NUEVA LIBRERÍA: Para escribir archivos de Excel
+library(writexl)
+library(shinyjs)
 
 # 2. Definición de la Interfaz de Usuario (UI)
 ui <- dashboardPage(
@@ -19,12 +21,12 @@ ui <- dashboardPage(
     width = 300,
     tags$style(type = "text/css", ".sidebar { height: 90vh; overflow-y: auto; }"),
     
-    h4("Filtros de Datos", style = "padding-left : 15px;"),#padding-left text-align: center
+    h4("Filtros de Datos", style = "padding-left : 15px;"),
     hr(),
     dateRangeInput(
       "fechas",
       "Rango de fechas:",
-      start = Sys.Date() - 365,
+      start = Sys.Date() - 180,
       end = Sys.Date(),
       format = "yyyy-mm-dd",
       language = "es",
@@ -36,7 +38,7 @@ ui <- dashboardPage(
       "Rango de magnitud:",
       min = 3,
       max = 9,
-      value = c(3, 9),
+      value = c(4, 9),
       step = 0.1,
       width = "90%"
     ),
@@ -69,14 +71,20 @@ ui <- dashboardPage(
       width = "90%"
     ),
     
-    actionButton(
-      "actualizar",
-      "Actualizar Datos",
-      icon = icon("sync"),
-      width = "90%",
-      class = "btn-primary"
+    div(style="display: flex; justify-content: center; gap: 5px; width: 100%;",
+        actionButton(
+          "actualizar",
+          "Actualizar Datos",
+          icon = icon("sync"),
+          class = "btn-primary"
+        ),
+        actionButton(
+          "limpiar_filtros",
+          "Limpiar Filtros",
+          icon = icon("undo"),
+          class = "btn-warning"
+        )
     ),
-    
     
     hr(),
     
@@ -87,20 +95,18 @@ ui <- dashboardPage(
                tags$img(src = "https://i.postimg.cc/kGWdcVyf/Captura-de-pantalla-2025-08-01-090858.png", height = "65px"))
     ),
     
-    ## MODIFICACIÓN 1: Añadir un botón de descarga dedicado.
+    br(),
     
-    br(), # Un pequeño espacio
-    
-    #hr(),
     downloadButton(
       "descargar_excel",
       "Descargar Base Completa (Excel)",
-      class = "btn-success", # Botón verde para destacar
+      class = "btn-success",
       style = "width: 90%; margin-left: 15px;"
     )
   ),
   
   dashboardBody(
+    useShinyjs(),
     tabsetPanel(
       id = "tabs",
       tabPanel(
@@ -141,12 +147,24 @@ server <- function(input, output, session) {
   
   observeEvent(input$actualizar, {
     req(input$filtro_placa)
+    
+    duracion_dias <- as.numeric(input$fechas[2] - input$fechas[1])
+    if (duracion_dias > 180 && input$magnitud[1] < 4.0) {
+      showNotification(
+        "La selección es muy amplia y podría exceder el límite de la API. Por favor, reduce el rango de fechas o aumenta la magnitud mínima.",
+        type = "warning",
+        duration = 10
+      )
+      return()
+    }
+    
     withProgress(message = 'Cargando datos sísmicos...', value = 0.5, {
       eventos_raw <- tryCatch({
         iris <- new("IrisClient")
         getEvent(iris, starttime = as.POSIXct(input$fechas[1], tz = "UTC"), endtime = as.POSIXct(input$fechas[2], tz = "UTC"), minmag = input$magnitud[1], maxmag = input$magnitud[2]) %>% as.data.frame()
       }, error = function(e){
-        showNotification(paste("Error al obtener datos sísmicos:", e$message), type = "error", duration = 10)
+        msg <- gsub("Error: ", "", e$message)
+        showNotification(paste("Error al obtener datos sísmicos:", msg), type = "error", duration = 15)
         return(NULL)
       })
       
@@ -179,11 +197,26 @@ server <- function(input, output, session) {
         datos_procesados(eventos_finales)
         
       } else if (!is.null(eventos_raw) && nrow(eventos_raw) == 0) {
-        showNotification("No se encontraron sismos para los filtros seleccionados.", type = "warning", duration = 5)
-        datos_procesados(NULL)
+        datos_procesados(data.frame()) 
       }
     })
   }, ignoreNULL = FALSE)
+  
+  observeEvent(input$limpiar_filtros, {
+    updateDateRangeInput(session, "fechas",
+                         start = Sys.Date() - 180,
+                         end = Sys.Date())
+    
+    updateSliderInput(session, "magnitud", value = c(4, 9))
+    
+    updateSliderInput(session, "profundidad", value = 700)
+    
+    updateSelectInput(session, "filtro_placa", selected = "all")
+    
+    shinyjs::click("actualizar")
+    
+    showNotification("Filtros restaurados.", duration = 3, type = "message")
+  })
   
   output$mapa <- renderLeaflet({
     leaflet() %>%
@@ -228,9 +261,16 @@ server <- function(input, output, session) {
   
   output$tabla_datos <- renderDT({
     datos <- datos_procesados()
+    
     if (is.null(datos)) {
-      datos <- data.frame(Fecha=character(), Ubicación=character(), Magnitud=numeric(), Profundidad=numeric(), `Placa Tectónica`=character(), check.names = FALSE)
+      return(datatable(
+        data.frame(Resultado = character()),
+        options = list(language = list(emptyTable = "Dar clic al botón 'Actualizar Datos' para comenzar."), dom = 't'),
+        rownames = FALSE,
+        colnames = ""
+      ))
     }
+    
     datatable(
       datos %>% select(-Color, -Latitud, -Longitud) %>% rename(`Placa Tectónica` = NombrePlaca) %>% arrange(desc(Magnitud)),
       extensions = 'Buttons',
@@ -239,40 +279,22 @@ server <- function(input, output, session) {
     ) %>% formatRound(columns = c('Magnitud', 'Profundidad'), digits = 2)
   })
   
-  ## MODIFICACIÓN 2: Añadir la lógica de descarga (downloadHandler).
   output$descargar_excel <- downloadHandler(
     filename = function() {
       paste0("datos_sismicos_completos_", Sys.Date(), ".xlsx")
     },
     content = function(file) {
-      # Acceder a los datos completos desde el reactiveVal
       datos_a_descargar <- datos_procesados()
       
-      # Comprobar si hay datos para descargar
       if (is.null(datos_a_descargar) || nrow(datos_a_descargar) == 0) {
-        # Crear un dataframe vacío con nombres de columna para no generar un error
-        datos_a_descargar <- data.frame(
-          Fecha = character(),
-          Ubicación = character(),
-          Magnitud = numeric(),
-          Profundidad_km = numeric(),
-          Latitud = numeric(),
-          Longitud = numeric(),
-          `Placa Tectónica` = character(),
-          check.names = FALSE
-        )
+        datos_a_descargar <- data.frame(Fecha = character(), Ubicación = character(), Magnitud = numeric(), Profundidad_km = numeric(), Latitud = numeric(), Longitud = numeric(), `Placa Tectónica` = character(), check.names = FALSE)
         showNotification("No hay datos para descargar con los filtros actuales.", type = "warning", duration = 5)
       } else {
-        # Preparar el dataframe para la descarga: seleccionar y renombrar columnas
         datos_a_descargar <- datos_a_descargar %>%
           select(Fecha, Ubicación, Magnitud, Profundidad, Latitud, Longitud, NombrePlaca) %>%
-          rename(
-            Profundidad_km = Profundidad,
-            `Placa Tectónica` = NombrePlaca
-          )
+          rename(Profundidad_km = Profundidad, `Placa Tectónica` = NombrePlaca)
       }
       
-      # Escribir el archivo Excel
       writexl::write_xlsx(datos_a_descargar, path = file)
     }
   )

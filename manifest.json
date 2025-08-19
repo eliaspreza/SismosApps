@@ -66,7 +66,7 @@
         "Maintainer": "Joe Cheng <joe@posit.co>",
         "Repository": "CRAN",
         "Date/Publication": "2024-04-04 05:03:17 UTC",
-        "Built": "R 4.5.1; ; 2025-07-30 02:34:58 UTC; windows"
+        "Built": "R 4.5.1; ; 2025-08-04 01:58:52 UTC; windows"
       }
     },
     "IRISSeismic": {
@@ -91,7 +91,7 @@
         "Maintainer": "Gillian Sharer <gillian.sharer@earthscope.org>",
         "Packaged": "2025-04-23 23:41:17 UTC; gilliansharer",
         "Date/Publication": "2025-04-25 09:00:06 UTC",
-        "Built": "R 4.5.1; x86_64-w64-mingw32; 2025-07-28 02:01:31 UTC; windows",
+        "Built": "R 4.5.1; x86_64-w64-mingw32; 2025-08-04 01:41:54 UTC; windows",
         "Archs": "x64"
       }
     },
@@ -814,7 +814,7 @@
         "Maintainer": "Hadley Wickham <hadley@posit.co>",
         "Repository": "CRAN",
         "Date/Publication": "2023-11-17 16:50:02 UTC",
-        "Built": "R 4.5.1; x86_64-w64-mingw32; 2025-07-19 02:05:05 UTC; windows",
+        "Built": "R 4.5.1; x86_64-w64-mingw32; 2025-08-04 01:58:30 UTC; windows",
         "Archs": "x64"
       }
     },
@@ -1101,7 +1101,7 @@
         "Maintainer": "Michael Mahoney <mike.mahoney.218@gmail.com>",
         "Repository": "CRAN",
         "Date/Publication": "2023-09-06 17:40:03 UTC",
-        "Built": "R 4.5.1; ; 2025-07-30 02:55:57 UTC; windows"
+        "Built": "R 4.5.1; ; 2025-08-04 02:28:04 UTC; windows"
       }
     },
     "geojsonsf": {
@@ -1646,7 +1646,7 @@
         "Maintainer": "Joe Cheng <joe@posit.co>",
         "Repository": "CRAN",
         "Date/Publication": "2024-03-26 19:10:06 UTC",
-        "Built": "R 4.5.1; ; 2025-07-30 02:12:09 UTC; windows"
+        "Built": "R 4.5.1; ; 2025-08-04 01:59:00 UTC; windows"
       }
     },
     "leaflet.providers": {
@@ -2422,7 +2422,7 @@
         "Maintainer": "Winston Chang <winston@posit.co>",
         "Repository": "CRAN",
         "Date/Publication": "2025-07-03 06:20:02 UTC",
-        "Built": "R 4.5.1; ; 2025-07-30 02:01:48 UTC; windows"
+        "Built": "R 4.5.1; ; 2025-08-04 01:49:16 UTC; windows"
       }
     },
     "shinycssloaders": {
@@ -2448,7 +2448,7 @@
         "Maintainer": "Dean Attali <daattali@gmail.com>",
         "Repository": "CRAN",
         "Date/Publication": "2024-07-30 22:30:02 UTC",
-        "Built": "R 4.5.1; ; 2025-07-30 02:11:46 UTC; windows"
+        "Built": "R 4.5.1; ; 2025-08-04 01:50:09 UTC; windows"
       }
     },
     "shinydashboard": {
@@ -2473,7 +2473,34 @@
         "Maintainer": "Winston Chang <winston@posit.co>",
         "Repository": "CRAN",
         "Date/Publication": "2025-04-21 21:30:02 UTC",
-        "Built": "R 4.5.1; ; 2025-07-30 02:11:43 UTC; windows"
+        "Built": "R 4.5.1; ; 2025-08-04 01:59:04 UTC; windows"
+      }
+    },
+    "shinyjs": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "shinyjs",
+        "Title": "Easily Improve the User Experience of Your Shiny Apps in Seconds",
+        "Version": "2.1.0",
+        "Authors@R": "person(\"Dean\", \"Attali\", \n    email = \"daattali@gmail.com\",\n    role = c(\"aut\", \"cre\"),\n    comment= c(ORCID=\"0000-0002-5645-3493\"))",
+        "Description": "Perform common useful JavaScript operations in Shiny apps that will\n    greatly improve your apps without having to know any JavaScript. Examples\n    include: hiding an element, disabling an input, resetting an input back to\n    its original value, delaying code execution by a few seconds, and many more\n    useful functions for both the end user and the developer. 'shinyjs' can also\n    be used to easily call your own custom JavaScript functions from R.",
+        "URL": "https://deanattali.com/shinyjs/",
+        "BugReports": "https://github.com/daattali/shinyjs/issues",
+        "Depends": "R (>= 3.1.0)",
+        "Imports": "digest (>= 0.6.8), jsonlite, shiny (>= 1.0.0)",
+        "Suggests": "htmltools (>= 0.2.9), knitr (>= 1.7), rmarkdown, shinyAce,\nshinydisconnect, testthat (>= 0.9.1)",
+        "License": "MIT + file LICENSE",
+        "VignetteBuilder": "knitr",
+        "RoxygenNote": "7.1.1",
+        "Encoding": "UTF-8",
+        "NeedsCompilation": "no",
+        "Packaged": "2021-12-21 11:32:22 UTC; Dean-X1C",
+        "Author": "Dean Attali [aut, cre] (<https://orcid.org/0000-0002-5645-3493>)",
+        "Maintainer": "Dean Attali <daattali@gmail.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2021-12-23 10:10:02 UTC",
+        "Built": "R 4.5.1; ; 2025-08-04 01:58:46 UTC; windows"
       }
     },
     "signal": {
@@ -2550,7 +2577,7 @@
         "Maintainer": "Edzer Pebesma <edzer.pebesma@uni-muenster.de>",
         "Repository": "CRAN",
         "Date/Publication": "2025-02-01 09:40:02 UTC",
-        "Built": "R 4.5.0; x86_64-w64-mingw32; 2025-05-26 01:09:54 UTC; windows",
+        "Built": "R 4.5.1; x86_64-w64-mingw32; 2025-08-04 01:05:25 UTC; windows",
         "Archs": "x64"
       }
     },
@@ -3062,7 +3089,7 @@
         "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
         "Repository": "CRAN",
         "Date/Publication": "2025-04-15 14:40:03 UTC",
-        "Built": "R 4.5.1; x86_64-w64-mingw32; 2025-07-28 00:33:44 UTC; windows",
+        "Built": "R 4.5.1; x86_64-w64-mingw32; 2025-08-04 00:21:28 UTC; windows",
         "Archs": "x64"
       }
     },
@@ -3146,8 +3173,11 @@
     }
   },
   "files": {
+    ".RData": {
+      "checksum": "6142bff386393bb52dda2a4cc52a02fc"
+    },
     "app.R": {
-      "checksum": "684e1cb47df26d8e91e297611ea75d57"
+      "checksum": "9a41d2bd09fb7c8a77c832913e848104"
     }
   },
   "users": null
